@@ -12,15 +12,17 @@ public class Main {
          frame.setVisible(true);
          frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
          frame.setLocationRelativeTo(null);
-         frame.setSize(SCREEN_WIDTH,SCREEN_HEIGHT + PALLETTE_HEIGHT);
+         frame.setSize(SCREEN_WIDTH + 16,SCREEN_HEIGHT + PALLETTE_HEIGHT + 32);
          runnit();
      }
     public static void runnit() throws InterruptedException {
-        Editor editor = new Editor(SCREEN_WIDTH, SCREEN_HEIGHT,48, frame);
+        Editor editor = new Editor(SCREEN_WIDTH, SCREEN_HEIGHT,48);
         frame.add(editor);
+        frame.revalidate();
+        frame.repaint();
         while(true){
             editor.repaint();
-            editor.move();
+            editor.move(frame);
             Thread.sleep(20);
         }
     }

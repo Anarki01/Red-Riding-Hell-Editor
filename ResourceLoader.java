@@ -10,7 +10,7 @@ public abstract class ResourceLoader {
 
     protected static BufferedImage loadImage(String file) {
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        InputStream filePath = loader.getResourceAsStream("" + file);
+        InputStream filePath = loader.getResourceAsStream("res/images/" + file);
         BufferedImage img = null;
         try {
             img = ImageIO.read(filePath);
