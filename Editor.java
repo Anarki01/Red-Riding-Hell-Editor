@@ -3,12 +3,17 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 public class Editor extends JPanel {
     private BufferedImage img = ResourceLoader.loadImage("spritesheet1.png");
     private BufferedImage imgnext = ResourceLoader.loadImage("btn_next.png");
     private BufferedImage imgprevious = ResourceLoader.loadImage("btn_previous.png");
+    private BufferedImage imgsave = ResourceLoader.loadImage("btn_save.png");
     private BufferedImage cursor;
     private int sceneWidth;
     private int sceneHeight;
@@ -51,6 +56,10 @@ public class Editor extends JPanel {
             }
             g.drawLine(0, j * blockSize, sceneWidth, j * blockSize);
         }
+        //Draw Buttons
+        g.drawImage(imgnext, 15*blockSize,blockSize*rows ,null);
+        g.drawImage(imgprevious, 15*blockSize,blockSize*rows + 42 ,null);
+        g.drawImage(imgsave, 15*blockSize,blockSize*rows + 84 ,null);
         //Paint spritesheet
         g.drawImage(img, 0, rows * blockSize, null);
         //Paint cursor
@@ -61,9 +70,6 @@ public class Editor extends JPanel {
                 if(grid[j][i] != null)grid[j][i].paint(g);
             }
         }
-        //Draw Buttons
-        g.drawImage(imgnext, 15*blockSize,blockSize*rows ,null);
-        g.drawImage(imgprevious, 15*blockSize,blockSize*rows + 42 ,null);
     }
 
     public void move(JFrame frame){
@@ -73,7 +79,11 @@ public class Editor extends JPanel {
     public void checkButtonPressed(){
         if(mouseLocY > rows * blockSize && mouseLocX > 15 * blockSize){ //Check if its in the button area
             if(mouseLocY < rows * blockSize + 42)pressedNext();
-            else pressedPrevious();
+            else if(mouseLocY < rows * blockSize + 84){
+                pressedPrevious();
+            }else{
+                readToFile();
+            }
         }
     }
     public void pressedNext(){
@@ -81,6 +91,20 @@ public class Editor extends JPanel {
     }
     public void pressedPrevious(){
         img = ResourceLoader.loadImage("spritesheet1.png");
+    }
+    public void readToFile(){
+        try{
+            BufferedWriter writer = new BufferedWriter(new FileWriter(("res/images/level.txt")));
+            for(int j = 0; j < rows; j++){
+                for(int i = 0; i < cols; i++){
+                writer.write(Integer.toString(grid[j][i].getID()));
+                }
+                writer.newLine();
+            }
+            writer.close();
+        }catch(Exception e){
+            System.out.println("Failed to Open.");
+        }
     }
     public void setMouseLocX(int mouseX){
         mouseLocX = mouseX;
