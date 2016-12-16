@@ -1,12 +1,75 @@
 import javax.imageio.ImageIO;
 import javax.sound.sampled.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Random;
 
 public abstract class ResourceLoader {
+
+    protected static void writeFile(int in_rows, int in_cols, Tile in_grid[][], String level) {
+
+        File dir = new File(System.getProperty("user.home") + File.separator + "Documents/Red-Riding-Hell-Levels");
+        dir.mkdir();
+
+        String filePath = System.getProperty("user.home") + File.separator + "Documents/Red-Riding-Hell-Levels" + File.separator + level;
+
+        try {
+            OutputStream file = new FileOutputStream(filePath);
+            try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(file))) {
+
+                for(int j = 0; j < in_rows; j++){
+                    for(int i = 0; i < in_cols; i++) {
+                        Tile tile = in_grid[j][i];
+                        if (tile != null) {
+                            int val = tile.getID();
+                            writer.write(String.valueOf(val) + ";");
+                        }
+                    }
+                    writer.newLine();
+                }
+                writer.close();
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static Tile[][] readFile(BufferedImage in_img, int in_blockSize, String level) {
+
+        Tile[][] pass_grid = new Tile[30][30];
+        String filePath = System.getProperty("user.home") + File.separator + "Documents/Red-Riding-Hell-Levels" + File.separator + level;
+        int lineNum = 0;
+        String line;
+
+        try {
+            InputStream file = new FileInputStream(filePath);
+
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(file))) {
+
+                while ((line = reader.readLine()) != null) {
+
+                    String[] parts = line.split(";");
+
+                    for (int i=0; i<line.length(); i++) {
+                        pass_grid[lineNum][i] = new Tile(in_img, i, lineNum, Integer.valueOf(parts[0]));
+                    }
+                    lineNum++;
+                }
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return pass_grid;
+    }
 
     protected static BufferedImage loadImage(String file) {
         ClassLoader loader = Thread.currentThread().getContextClassLoader();

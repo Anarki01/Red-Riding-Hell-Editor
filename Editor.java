@@ -3,17 +3,14 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
 
 public class Editor extends JPanel {
+    private JTextField nameField;
     private BufferedImage img = ResourceLoader.loadImage("spritesheet1.png");
     private BufferedImage imgnext = ResourceLoader.loadImage("btn_next.png");
     private BufferedImage imgprevious = ResourceLoader.loadImage("btn_previous.png");
     private BufferedImage imgsave = ResourceLoader.loadImage("btn_save.png");
+    private BufferedImage imgload = ResourceLoader.loadImage("btn_load.png");
     private BufferedImage cursor;
     private int sceneWidth;
     private int sceneHeight;
@@ -38,9 +35,9 @@ public class Editor extends JPanel {
             public void mousePressed(MouseEvent arg0) {
 
                 if(mouseLocY > rows * blockSize && mouseLocX < 15 * blockSize){ //Clicked inside Pallette
-                        pallettePicked = ((mouseLocY - rows * blockSize) / blockSize) * 10 + mouseLocX / blockSize;
-                        cursor = img.getSubimage((mouseLocX / blockSize) * blockSize, ((mouseLocY - rows * blockSize) / blockSize) * blockSize, blockSize, blockSize);
-                    }
+                    pallettePicked = ((mouseLocY - rows * blockSize) / blockSize) * 10 + mouseLocX / blockSize;
+                    cursor = img.getSubimage((mouseLocX / blockSize) * blockSize, ((mouseLocY - rows * blockSize) / blockSize) * blockSize, blockSize, blockSize);
+                }
                 else if(mouseLocY < rows * blockSize && mouseLocX < 16 * blockSize){ //Clicked inside Scene
                     if(pallettePicked!= -1){
                         grid[mouseLocY/blockSize + yShift][mouseLocX/blockSize+xShift] = new Tile(cursor, (mouseLocX/blockSize)*blockSize, (mouseLocY/blockSize)*blockSize,pallettePicked);
@@ -48,8 +45,9 @@ public class Editor extends JPanel {
                 }else checkButtonPressed();
 
             }
-    });
+        });
     }
+
     public void paint(Graphics g){
         super.paint(g);
         g.setColor(Color.BLACK);
@@ -73,6 +71,8 @@ public class Editor extends JPanel {
         g.drawImage(imgnext, 16*blockSize + 54, 134 ,null);
         g.drawString("Save to File: ", 16 * blockSize + 2, 192);
         g.drawImage(imgsave, 16*blockSize + 12, 194 ,null);
+        g.drawString("Load File: ", 16 * blockSize + 12, 252);
+        g.drawImage(imgload, 16*blockSize + 12, 254, null);
         //Paint spritesheet
         g.drawImage(img, 0, rows * blockSize, null);
         //Paint cursor
@@ -110,7 +110,15 @@ public class Editor extends JPanel {
                 if (mouseLocX > 16 * blockSize + 4 && mouseLocX < 16 * blockSize + 52) shiftUp();
                 else if(mouseLocX > 16 * blockSize + 54 && mouseLocX < 16 * blockSize + 102)shiftDown();
             }else if (mouseLocY > 192 && mouseLocY < 240) {//Fourth Row
-                if (mouseLocX > 16*blockSize + 12 && mouseLocX < 16*blockSize + 60) readToFile();
+                if (mouseLocX > 16*blockSize + 12 && mouseLocX < 16*blockSize + 60) {
+                    String levelName = JOptionPane.showInputDialog("Please enter level name (Using existing name will overwrite): ");
+                    ResourceLoader.writeFile(rows, cols, grid, levelName + ".txt");
+                }
+            }else if (mouseLocY > 252 && mouseLocY < 300) {//Fifth Row
+                if (mouseLocX > 16*blockSize + 12 && mouseLocX < 16*blockSize + 60) {
+                    String levelName = JOptionPane.showInputDialog("Enter name of level to load: ");
+                    grid = ResourceLoader.readFile(img, blockSize, levelName + ".txt");
+                }
             }
         }
     }
@@ -120,20 +128,7 @@ public class Editor extends JPanel {
     public void pressedPrevious(){
         img = ResourceLoader.loadImage("spritesheet1.png");
     }
-    public void readToFile(){
-        try{
-            BufferedWriter writer = new BufferedWriter(new FileWriter(("res/images/level.txt")));
-            for(int j = 0; j < rows; j++){
-                for(int i = 0; i < cols; i++){
-                writer.write(Integer.toString(grid[j][i].getID()));
-                }
-                writer.newLine();
-            }
-            writer.close();
-        }catch(Exception e){
-            System.out.println("Failed to Open.");
-        }
-    }
+
     public void shiftLeft(){
         if(xShift < 14){
             xShift++;
