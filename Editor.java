@@ -60,10 +60,16 @@ public class Editor extends JPanel {
             g.drawLine(0, j * blockSize, blockSize * cols, j * blockSize);
         }
         //Draw Buttons
-        g.drawImage(imgnext, 15*blockSize,blockSize*rows ,null);
-        g.drawImage(imgprevious, 15*blockSize,blockSize*rows + 42 ,null);
-        g.drawImage(imgsave, 15*blockSize,blockSize*rows + 84 ,null);
-        g.drawImage(imgnext, 15*blockSize,blockSize*rows + 126 ,null);
+        g.setColor(Color.BLACK);
+        g.setFont(new Font("Arial", 0, 10));
+        g.drawString("Sprite Sheet:", 16 * blockSize + 24, 12);
+        g.drawImage(imgprevious, 16*blockSize + 4,14 ,null);
+        g.drawImage(imgnext, 16*blockSize + 54, 14 ,null);
+        g.drawString("Shift Scene Horizontally:", 16 * blockSize + 2, 72);
+        g.drawImage(imgprevious, 16*blockSize + 4,74 ,null);
+        g.drawImage(imgnext, 16*blockSize + 54, 74 ,null);
+        g.drawString("Save to File: ", 16 * blockSize + 2, 132);
+        g.drawImage(imgsave, 16*blockSize + 12, 134 ,null);
         //Paint spritesheet
         g.drawImage(img, 0, rows * blockSize, null);
         //Paint cursor
@@ -86,17 +92,16 @@ public class Editor extends JPanel {
         setMouseLocX(MouseInfo.getPointerInfo().getLocation().x -frame.getLocation().x - 8);
         setMouseLocY(MouseInfo.getPointerInfo().getLocation().y -frame.getLocation().y - 32);
     }
-    public void checkButtonPressed(){
-        if(mouseLocY > rows * blockSize && mouseLocX > 15 * blockSize){ //Check if its in the button area
-            if(mouseLocY < rows * blockSize + 42)pressedNext();
-            else if(mouseLocY < rows * blockSize + 84){
-                pressedPrevious();
-            }else if(mouseLocY < rows * blockSize + 126){
-                readToFile();
-            }else if(mouseLocY < rows * blockSize + 168){
-                if(xShift < 14)shiftLeft();
-            }else{
-                if(xShift > 0)shiftRight();
+    public void checkButtonPressed() {
+        if (mouseLocX > 16 * blockSize) { //Check if its in the button area
+            if (mouseLocY > 14 && mouseLocY < 62) {//First Row
+                if (mouseLocX > 16 * blockSize + 4 && mouseLocX < 16 * blockSize + 52) pressedPrevious();
+                else if (mouseLocX > 16 * blockSize + 54 && mouseLocX < 16 * blockSize + 102) pressedNext();
+            } else if (mouseLocY > 74 && mouseLocY < 122) {//Second Row
+                if (mouseLocX > 16 * blockSize + 4 && mouseLocX < 16 * blockSize + 52)shiftLeft();
+                else if (mouseLocX > 16 * blockSize + 54 && mouseLocX < 16 * blockSize + 102)shiftRight();
+            } else if (mouseLocY > 132 && mouseLocY < 180) {//Third Row
+                if (mouseLocX > 16*blockSize + 12 && mouseLocX < 16*blockSize + 60) readToFile();
             }
         }
     }
@@ -121,20 +126,22 @@ public class Editor extends JPanel {
         }
     }
     public void shiftLeft(){
-        xShift++;
-        for(int j = 0; j < 10; j++){
-            for(int i = 0; i < 30; i++){
-                if(grid[j][i] != null)grid[j][i].setX(grid[j][i].getX() - blockSize);
-                if(grid[j][i] != null)System.out.println(i + " : " + j + " : " + grid[j][i].getID());
+        if(xShift < 14){
+            xShift++;
+            for (int j = 0; j < 10; j++) {
+                for (int i = 0; i < 30; i++) {
+                    if (grid[j][i] != null) grid[j][i].setX(grid[j][i].getX() - blockSize);
+                }
             }
         }
     }
     public void shiftRight(){
-        xShift--;
-        for(int j = 0; j < 10; j++){
-            for(int i = 0; i < 30; i++){
-                if(grid[j][i] != null)grid[j][i].setX(grid[j][i].getX() + blockSize);
-                if(grid[j][i] != null)System.out.println(i + " : " + j + " : " + grid[j][i].getID());
+        if(xShift > 0){
+            xShift--;
+            for (int j = 0; j < 10; j++) {
+                for (int i = 0; i < 30; i++) {
+                    if (grid[j][i] != null) grid[j][i].setX(grid[j][i].getX() + blockSize);
+                }
             }
         }
     }
