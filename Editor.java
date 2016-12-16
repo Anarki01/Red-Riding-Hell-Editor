@@ -33,7 +33,7 @@ public class Editor extends JPanel {
         this.blockSize = blockSize;
         cols = sceneWidth / blockSize;
         rows = sceneHeight / blockSize;
-        grid = new Tile[10][30];
+        grid = new Tile[30][30];
         this.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent arg0) {
 
@@ -43,7 +43,7 @@ public class Editor extends JPanel {
                     }
                 else if(mouseLocY < rows * blockSize && mouseLocX < 16 * blockSize){ //Clicked inside Scene
                     if(pallettePicked!= -1){
-                        grid[mouseLocY/blockSize][mouseLocX/blockSize+xShift] = new Tile(cursor, (mouseLocX/blockSize)*blockSize, (mouseLocY/blockSize)*blockSize,pallettePicked);
+                        grid[mouseLocY/blockSize + yShift][mouseLocX/blockSize+xShift] = new Tile(cursor, (mouseLocX/blockSize)*blockSize, (mouseLocY/blockSize)*blockSize,pallettePicked);
                     }
                 }else checkButtonPressed();
 
@@ -68,8 +68,11 @@ public class Editor extends JPanel {
         g.drawString("Shift Scene Horizontally:", 16 * blockSize + 2, 72);
         g.drawImage(imgprevious, 16*blockSize + 4,74 ,null);
         g.drawImage(imgnext, 16*blockSize + 54, 74 ,null);
-        g.drawString("Save to File: ", 16 * blockSize + 2, 132);
-        g.drawImage(imgsave, 16*blockSize + 12, 134 ,null);
+        g.drawString("Shift Scene Vertically:", 16 * blockSize + 2, 132);
+        g.drawImage(imgprevious, 16*blockSize + 4,134 ,null);
+        g.drawImage(imgnext, 16*blockSize + 54, 134 ,null);
+        g.drawString("Save to File: ", 16 * blockSize + 2, 192);
+        g.drawImage(imgsave, 16*blockSize + 12, 194 ,null);
         //Paint spritesheet
         g.drawImage(img, 0, rows * blockSize, null);
         //Paint cursor
@@ -77,14 +80,17 @@ public class Editor extends JPanel {
         //Draw Tiles
         for(int j = 0; j < rows; j++){
             for(int i = 0; i < cols; i++) {
-                if(grid[j][i+xShift] != null)grid[j][i+xShift].paint(g);
+                if(grid[j+yShift][i+xShift] != null)grid[j+yShift][i+xShift].paint(g);
             }
         }
         //Draw tile numbers
         g.setColor(Color.BLACK);
         g.setFont(new Font("Arial", 0, 10));
-        for(int i = 0; i < cols; i++) {
+        for(int i = 0; i < cols; i++) { //Columns
             g.drawString("" + (i+xShift), i*blockSize, 10);
+        }
+        for(int i = 0; i < rows; i++) {
+            g.drawString("" + (i+yShift), 1, (i+1)*blockSize);
         }
     }
 
@@ -101,6 +107,9 @@ public class Editor extends JPanel {
                 if (mouseLocX > 16 * blockSize + 4 && mouseLocX < 16 * blockSize + 52)shiftLeft();
                 else if (mouseLocX > 16 * blockSize + 54 && mouseLocX < 16 * blockSize + 102)shiftRight();
             } else if (mouseLocY > 132 && mouseLocY < 180) {//Third Row
+                if (mouseLocX > 16 * blockSize + 4 && mouseLocX < 16 * blockSize + 52) shiftUp();
+                else if(mouseLocX > 16 * blockSize + 54 && mouseLocX < 16 * blockSize + 102)shiftDown();
+            }else if (mouseLocY > 192 && mouseLocY < 240) {//Fourth Row
                 if (mouseLocX > 16*blockSize + 12 && mouseLocX < 16*blockSize + 60) readToFile();
             }
         }
@@ -145,6 +154,27 @@ public class Editor extends JPanel {
             }
         }
     }
+    public void shiftUp(){
+        if(yShift < 3){
+            yShift++;
+            for (int j = 0; j < 10; j++) {
+                for (int i = 0; i < 30; i++) {
+                    if (grid[j][i] != null) grid[j][i].setY(grid[j][i].getY() - blockSize);
+                }
+            }
+        }
+    }
+    public void shiftDown(){
+        if(yShift > 0){
+            yShift--;
+            for (int j = 0; j < 10; j++) {
+                for (int i = 0; i < 30; i++) {
+                    if (grid[j][i] != null) grid[j][i].setY(grid[j][i].getY() + blockSize);
+                }
+            }
+        }
+    }
+
     public void setMouseLocX(int mouseX){
         mouseLocX = mouseX;
     }
