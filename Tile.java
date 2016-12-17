@@ -4,33 +4,53 @@ import java.awt.image.BufferedImage;
 
 public class Tile extends JPanel {
     private BufferedImage img;
-    private int x;
+    private int x;  //Grid X
     private int y;
-    private int ID;
-    public Tile(BufferedImage img, int x, int y, int ID){
+    private int pX; //Pallette X
+    private int pY;
+    private int tempX;  //X thats drawn in current view
+    private int tempY;
+    private int spriteSheet;
+    public Tile(BufferedImage img, int x, int y, int pX, int pY, int spriteSheet){
         this.img = img;
         this.x = x;
         this.y = y;
-        this.ID = ID;
+        this.pX = pX;
+        this.pY = pY;
+        this.tempX = x;
+        this.tempY = y;
+        this.spriteSheet = spriteSheet;
     }
     public void paint(Graphics g){
         super.paint(g);
-        g.drawImage(img, x, y, null);
-    }
-    public int getID(){
-        return ID;
+        g.drawImage(img, tempX, tempY, null);
     }
     public int getX(){
         return x;
     }
+    public int getTempX(){
+        return tempX;
+    }
     public int getY(){
         return y;
     }
+    public int getTempY(){
+        return tempY;
+    }
+    public int getPX(){
+        return pX;
+    }
+    public int getPY(){
+        return pY;
+    }
+    public int getSpriteSheet(){
+        return spriteSheet;
+    }
     public void setX(int x){
-        this.x = x;
+        this.tempX = x;
     }
     public void setY(int y){
-        this.y = y;
+        this.tempY = y;
     }
 
 }

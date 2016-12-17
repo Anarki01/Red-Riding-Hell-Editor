@@ -5,7 +5,6 @@ import java.io.*;
 import java.util.Random;
 
 public abstract class ResourceLoader {
-
     protected static void writeFile(int in_rows, int in_cols, Tile in_grid[][], String level) {
 
         File dir = new File(System.getProperty("user.home") + File.separator + "Documents/Red-Riding-Hell-Levels");
@@ -17,15 +16,14 @@ public abstract class ResourceLoader {
             OutputStream file = new FileOutputStream(filePath);
             try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(file))) {
 
-                for(int j = 0; j < in_rows; j++){
-                    for(int i = 0; i < in_cols; i++) {
+                for(int i = 0; i < in_cols; i++){
+                    for(int j = 0; j < in_rows; j++) {
                         Tile tile = in_grid[j][i];
                         if (tile != null) {
-                            int val = tile.getID();
-                            writer.write(String.valueOf(val) + ";");
+                            writer.write(String.valueOf(tile.getX()/48) +  ";" + String.valueOf(tile.getY()/48) +  ";" + String.valueOf(tile.getPX()) +  ";" + String.valueOf(tile.getPY()) +  ";" + String.valueOf(tile.getSpriteSheet()) +  ";");
+                            writer.newLine();
                         }
                     }
-                    writer.newLine();
                 }
                 writer.close();
             }
@@ -55,7 +53,7 @@ public abstract class ResourceLoader {
                     String[] parts = line.split(";");
 
                     for (int i=0; i<line.length(); i++) {
-                        pass_grid[lineNum][i] = new Tile(in_img, i, lineNum, Integer.valueOf(parts[0]));
+                      //  pass_grid[lineNum][i] = new Tile(in_img, i, lineNum, Integer.valueOf(parts[0]));
                     }
                     lineNum++;
                 }
@@ -70,7 +68,6 @@ public abstract class ResourceLoader {
 
         return pass_grid;
     }
-
     protected static BufferedImage loadImage(String file) {
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         InputStream filePath = loader.getResourceAsStream("res/images/" + file);
