@@ -49,7 +49,7 @@ public class Editor extends JPanel {
                         cursor = img.getSubimage((mouseLocX / blockSize) * blockSize, ((mouseLocY - rows * blockSize) / blockSize) * blockSize, blockSize, blockSize);
                     }
                 else if(mouseLocY < rows * blockSize && mouseLocX < 16 * blockSize){ //Clicked inside Scene
-                    if(pallettePicked)grid[mouseLocY/blockSize + yShift][mouseLocX/blockSize+xShift] = new Tile(cursor, (mouseLocX/blockSize)*blockSize, (mouseLocY/blockSize)*blockSize, palletteX, palletteY, spriteSheet);
+                    if(pallettePicked)grid[mouseLocY/blockSize + yShift][mouseLocX/blockSize+xShift] = new Tile(cursor, (mouseLocX/blockSize)*blockSize, (mouseLocY/blockSize)*blockSize, palletteX, palletteY, spriteSheet, xShift,yShift);
                 }else checkButtonPressed();
 
             }
@@ -141,6 +141,8 @@ public class Editor extends JPanel {
                 grid[j][i] = null;
             }
         }
+        xShift = 0;
+        yShift = 0;
         grid = ResourceLoader.readFile(img, blockSize, levelName + ".txt");
     }
     public void shiftLeft(){

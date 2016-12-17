@@ -11,10 +11,10 @@ public class Tile extends JPanel {
     private int tempX;  //X thats drawn in current view
     private int tempY;
     private int spriteSheet;
-    public Tile(BufferedImage img, int x, int y, int pX, int pY, int spriteSheet){
+    public Tile(BufferedImage img, int x, int y, int pX, int pY, int spriteSheet, int xShift, int yShift){
         this.img = img;
-        this.x = x;
-        this.y = y;
+        this.x = x + xShift*48;
+        this.y = y + yShift*48;
         this.pX = pX;
         this.pY = pY;
         this.tempX = x;
