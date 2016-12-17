@@ -136,6 +136,11 @@ public class Editor extends JPanel {
     }
     public void readFromFile(){
         String levelName = JOptionPane.showInputDialog("Enter name of level to load: ");
+        for(int j = 0; j < 30; j++){
+            for(int i = 0; i < 30; i++){
+                grid[j][i] = null;
+            }
+        }
         grid = ResourceLoader.readFile(img, blockSize, levelName + ".txt");
     }
     public void shiftLeft(){

@@ -51,10 +51,7 @@ public abstract class ResourceLoader {
                 while ((line = reader.readLine()) != null) {
 
                     String[] parts = line.split(";");
-
-                    for (int i=0; i<line.length(); i++) {
-                      //  pass_grid[lineNum][i] = new Tile(in_img, i, lineNum, Integer.valueOf(parts[0]));
-                    }
+                        pass_grid[Integer.parseInt(parts[1])][Integer.parseInt(parts[0])] = new Tile(in_img.getSubimage(Integer.parseInt(parts[2])*48,Integer.parseInt(parts[3])*48, 48, 48),Integer.parseInt(parts[0])*48,Integer.parseInt(parts[1])* 48, Integer.parseInt(parts[2]), Integer.parseInt(parts[3]), Integer.parseInt(parts[4]));
                     lineNum++;
                 }
             }
