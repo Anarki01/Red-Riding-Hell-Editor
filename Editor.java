@@ -39,14 +39,14 @@ public class Editor extends JPanel {
         cols = sceneWidth / blockSize;
         rows = sceneHeight / blockSize;
         grid = new Tile[30][30];
-        btnSpriteSheet = new UI(imgUI.getSubimage(48,0,48,48), imgUI.getSubimage(0,0,48,48), 16 * blockSize + 10, 2, "Sprite Sheet");
-        btnShiftHori = new UI(imgUI.getSubimage(48,0,48,48), imgUI.getSubimage(0,0,48,48), 16 * blockSize + 120, 2, "Shift Horizontally:");
-        btnShiftVert = new UI(imgUI.getSubimage(48,0,48,48), imgUI.getSubimage(0,0,48,48), 16 * blockSize + 120, 62, "Shift Vertically:");
-        btnSaveLoad = new UI(imgUI.getSubimage(48,0,48,48), imgUI.getSubimage(0,0,48,48), 16 * blockSize + 10, 62, "Save/Load:");
-        btnZoom = new UI(imgUI.getSubimage(48,0,48,48), imgUI.getSubimage(0,0,48,48), 16 * blockSize + 10, 122, "Zoom In/Out:");
-        btnSkipHori = new UI(imgUI.getSubimage(48,0,48,48), imgUI.getSubimage(0,0,48,48), 16 * blockSize + 120, 122, "Skip Horizontally:");
-        btnSkipVert = new UI(imgUI.getSubimage(48,0,48,48), imgUI.getSubimage(0,0,48,48), 16 * blockSize + 120, 182, "Skip Vertically:");
-        btnDeleteTile = new UI(imgUI.getSubimage(96, 48,48,48), 16 * blockSize + 10, 242, "Delete Tile");
+        btnSpriteSheet = new UI(imgUI.getSubimage(48,0,48,48), imgUI.getSubimage(0,0,48,48), 16 * blockSize + 10, 52, "Sprite Sheet");
+        btnShiftHori = new UI(imgUI.getSubimage(48,0,48,48), imgUI.getSubimage(0,0,48,48), 16 * blockSize + 120, 52, "Shift Horizontally:");
+        btnShiftVert = new UI(imgUI.getSubimage(48,0,48,48), imgUI.getSubimage(0,0,48,48), 16 * blockSize + 120, 112, "Shift Vertically:");
+        btnSaveLoad = new UI(imgUI.getSubimage(48,0,48,48), imgUI.getSubimage(0,0,48,48), 16 * blockSize + 10, 112, "Save/Load:");
+        btnZoom = new UI(imgUI.getSubimage(48,0,48,48), imgUI.getSubimage(0,0,48,48), 16 * blockSize + 10, 172, "Zoom In/Out:");
+        btnSkipHori = new UI(imgUI.getSubimage(48,0,48,48), imgUI.getSubimage(0,0,48,48), 16 * blockSize + 120, 172, "Skip Horizontally:");
+        btnSkipVert = new UI(imgUI.getSubimage(48,0,48,48), imgUI.getSubimage(0,0,48,48), 16 * blockSize + 120, 232, "Skip Vertically:");
+        btnDeleteTile = new UI(imgUI.getSubimage(96, 48,48,48), 16 * blockSize + 10, 317, "Delete Tile");
         this.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent arg0) {
                 if(mouseLocY > rows * blockSize && mouseLocX < 15 * blockSize){ //Clicked inside Pallette
@@ -72,9 +72,15 @@ public class Editor extends JPanel {
             }
             g.drawLine(0, j * blockSize, blockSize * cols, j * blockSize);
         }
-        //Draw Buttons
-        g.setColor(Color.BLACK);
+        g.drawRect(16 * blockSize + 4, 52, 220, 250);
+        g.drawRect(16 * blockSize + 4, 317, 220, 67);
+
+
+        //Draw Headings
         g.setFont(new Font("Arial", 0, 10));
+        g.drawString("SCENE TOOLS", 16 * blockSize + 75, 48);
+        g.drawString("TOOLS", 16 * blockSize + 90, 313);
+        //Draw Buttons
         btnSpriteSheet.paint(g);
         btnShiftHori.paint(g);
         btnShiftVert.paint(g);
