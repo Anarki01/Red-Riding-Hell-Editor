@@ -3,18 +3,19 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 
 public class Editor extends JPanel {
     private JTextField nameField;
+    private UI btnSpriteSheet;
+    private UI btnShiftHori;
+    private UI btnSkipHori;
+    private UI btnShiftVert;
+    private UI btnSkipVert;
+    private UI btnSaveLoad;
+    private UI btnZoom;
+    private UI btnDeleteTile;
     private BufferedImage img = ResourceLoader.loadImage("spriteSheets/spritesheet0.png");
     private BufferedImage imgUI = ResourceLoader.loadImage("ui.png");
-    private BufferedImage imgnext = imgUI.getSubimage(0,0,48,48);
-    private BufferedImage imgprevious = imgUI.getSubimage(48,0,48,48);
-    private BufferedImage imgsave = imgUI.getSubimage(0,48,48,48);
-    private BufferedImage imgdeleteOff = imgUI.getSubimage(96,48,48,48);
-    private BufferedImage imgdeleteOn = imgUI.getSubimage(96,0,48,48);
     private BufferedImage cursor;
     private int sceneWidth;
     private int sceneHeight;
@@ -24,8 +25,6 @@ public class Editor extends JPanel {
     private int palletteX;
     private int palletteY;
     private int spriteSheet = 0;
-
-    private boolean delete = false;
 
     private int xShift = 0;
     private int yShift = 0;
@@ -40,6 +39,14 @@ public class Editor extends JPanel {
         cols = sceneWidth / blockSize;
         rows = sceneHeight / blockSize;
         grid = new Tile[30][30];
+        btnSpriteSheet = new UI(imgUI.getSubimage(48,0,48,48), imgUI.getSubimage(0,0,48,48), 16 * blockSize + 10, 2, "Sprite Sheet");
+        btnShiftHori = new UI(imgUI.getSubimage(48,0,48,48), imgUI.getSubimage(0,0,48,48), 16 * blockSize + 120, 2, "Shift Horizontally:");
+        btnShiftVert = new UI(imgUI.getSubimage(48,0,48,48), imgUI.getSubimage(0,0,48,48), 16 * blockSize + 120, 62, "Shift Vertically:");
+        btnSaveLoad = new UI(imgUI.getSubimage(48,0,48,48), imgUI.getSubimage(0,0,48,48), 16 * blockSize + 10, 62, "Save/Load:");
+        btnZoom = new UI(imgUI.getSubimage(48,0,48,48), imgUI.getSubimage(0,0,48,48), 16 * blockSize + 10, 122, "Zoom In/Out:");
+        btnSkipHori = new UI(imgUI.getSubimage(48,0,48,48), imgUI.getSubimage(0,0,48,48), 16 * blockSize + 120, 122, "Skip Horizontally:");
+        btnSkipVert = new UI(imgUI.getSubimage(48,0,48,48), imgUI.getSubimage(0,0,48,48), 16 * blockSize + 120, 182, "Skip Vertically:");
+        btnDeleteTile = new UI(imgUI.getSubimage(96, 48,48,48), 16 * blockSize + 10, 242, "Delete Tile");
         this.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent arg0) {
                 if(mouseLocY > rows * blockSize && mouseLocX < 15 * blockSize){ //Clicked inside Pallette
@@ -50,6 +57,7 @@ public class Editor extends JPanel {
                     }
                 else if(mouseLocY < rows * blockSize && mouseLocX < 16 * blockSize){ //Clicked inside Scene
                     if(pallettePicked)grid[mouseLocY/blockSize + yShift][mouseLocX/blockSize+xShift] = new Tile(cursor, (mouseLocX/blockSize)*blockSize, (mouseLocY/blockSize)*blockSize, palletteX, palletteY, spriteSheet, xShift,yShift);
+                    else grid[mouseLocY/blockSize + yShift][mouseLocX/blockSize+xShift] = null;
                 }else checkButtonPressed();
 
             }
@@ -67,23 +75,18 @@ public class Editor extends JPanel {
         //Draw Buttons
         g.setColor(Color.BLACK);
         g.setFont(new Font("Arial", 0, 10));
-        g.drawString("Sprite Sheet:", 16 * blockSize + 24, 12);
-        g.drawImage(imgprevious, 16*blockSize + 4,14 ,null);
-        g.drawImage(imgnext, 16*blockSize + 54, 14 ,null);
-        g.drawString("Shift Scene Horizontally:", 16 * blockSize + 2, 72);
-        g.drawImage(imgprevious, 16*blockSize + 4,74 ,null);
-        g.drawImage(imgnext, 16*blockSize + 54, 74 ,null);
-        g.drawString("Shift Scene Vertically:", 16 * blockSize + 2, 132);
-        g.drawImage(imgprevious, 16*blockSize + 4,134 ,null);
-        g.drawImage(imgnext, 16*blockSize + 54, 134 ,null);
-        g.drawString("Save to File: ", 16 * blockSize + 2, 192);
-        g.drawImage(imgsave, 16*blockSize + 12, 194 ,null);
-        g.drawString("Load File: ", 16 * blockSize + 12, 252);
-        g.drawImage(imgsave, 16*blockSize + 12, 254, null);
+        btnSpriteSheet.paint(g);
+        btnShiftHori.paint(g);
+        btnShiftVert.paint(g);
+        btnSaveLoad.paint(g);
+        btnZoom.paint(g);
+        btnSkipHori.paint(g);
+        btnSkipVert.paint(g);
+        btnDeleteTile.paint(g);
         //Paint spritesheet
         g.drawImage(img, 0, rows * blockSize, null);
         //Paint cursor
-        g.drawImage(cursor, mouseLocX, mouseLocY,null);
+        if(pallettePicked)g.drawImage(cursor, mouseLocX, mouseLocY,null);
         //Draw Tiles
         for(int j = 0; j < rows; j++){
             for(int i = 0; i < cols; i++) {
@@ -105,22 +108,21 @@ public class Editor extends JPanel {
         setMouseLocY(MouseInfo.getPointerInfo().getLocation().y -frame.getLocation().y - 32);
     }
     public void checkButtonPressed() {
-        if (mouseLocX > 16 * blockSize) { //Check if its in the button area
-            if (mouseLocY > 14 && mouseLocY < 62) {//First Row
-                if (mouseLocX > 16 * blockSize + 4 && mouseLocX < 16 * blockSize + 52) pressedPrevious();
-                else if (mouseLocX > 16 * blockSize + 54 && mouseLocX < 16 * blockSize + 102) pressedNext();
-            } else if (mouseLocY > 74 && mouseLocY < 122) {//Second Row
-                if (mouseLocX > 16 * blockSize + 4 && mouseLocX < 16 * blockSize + 52) shiftLeft();
-                else if (mouseLocX > 16 * blockSize + 54 && mouseLocX < 16 * blockSize + 102) shiftRight();
-            } else if (mouseLocY > 132 && mouseLocY < 180) {//Third Row
-                if (mouseLocX > 16 * blockSize + 4 && mouseLocX < 16 * blockSize + 52) shiftUp();
-                else if (mouseLocX > 16 * blockSize + 54 && mouseLocX < 16 * blockSize + 102) shiftDown();
-            } else if (mouseLocY > 192 && mouseLocY < 240) {//Fourth Row
-                if (mouseLocX > 16 * blockSize + 12 && mouseLocX < 16 * blockSize + 60) writeToFile();
-            } else if (mouseLocY > 252 && mouseLocY < 300) {//Fifth Row
-                if (mouseLocX > 16 * blockSize + 12 && mouseLocX < 16 * blockSize + 60) readFromFile();
-            }
-        }
+        if(btnSpriteSheet.checkWithin(mouseLocX, mouseLocY)) pressedPrevious();
+        if(btnSpriteSheet.checkWithin2(mouseLocX, mouseLocY)) pressedNext();
+        if(btnShiftHori.checkWithin(mouseLocX, mouseLocY)) shiftLeft();
+        if(btnShiftHori.checkWithin2(mouseLocX, mouseLocY)) shiftRight();
+        if(btnShiftVert.checkWithin(mouseLocX, mouseLocY)) shiftUp();
+        if(btnShiftVert.checkWithin2(mouseLocX, mouseLocY)) shiftDown();
+        if(btnSaveLoad.checkWithin(mouseLocX, mouseLocY)) writeToFile();
+        if(btnSaveLoad.checkWithin2(mouseLocX, mouseLocY)) readFromFile();
+//        if(btnZoom.checkWithin(mouseLocX, mouseLocY)) //zoom in
+//        if(btnZoom.checkWithin2(mouseLocX, mouseLocY)) //zoom out
+//        if(btnSkipHori.checkWithin(mouseLocX, mouseLocY)) //skip left
+//        if(btnSkipHori.checkWithin2(mouseLocX, mouseLocY))//skip right
+//        if(btnSkipVert.checkWithin(mouseLocX, mouseLocY))//skip up
+//        if(btnSkipVert.checkWithin2(mouseLocX, mouseLocY))//skip down
+        if(btnDeleteTile.checkWithin(mouseLocX, mouseLocY))pallettePicked = false;
     }
     public void pressedNext(){
         img = ResourceLoader.loadImage("spriteSheets/spritesheet1.png");
@@ -136,13 +138,7 @@ public class Editor extends JPanel {
     }
     public void readFromFile(){
         String levelName = JOptionPane.showInputDialog("Enter name of level to load: ");
-        for(int j = 0; j < 30; j++){
-            for(int i = 0; i < 30; i++){
-                grid[j][i] = null;
-            }
-        }
-        xShift = 0;
-        yShift = 0;
+        resetGrid();
         grid = ResourceLoader.readFile(img, blockSize, levelName + ".txt");
     }
     public void shiftLeft(){
@@ -185,11 +181,22 @@ public class Editor extends JPanel {
             }
         }
     }
-
     public void setMouseLocX(int mouseX){
         mouseLocX = mouseX;
     }
     public void setMouseLocY(int mouseY){
         mouseLocY = mouseY;
+    }
+//    public void selectNothing(){
+//        pallettePicked = false;
+//        cursor =
+//    }
+    public void resetGrid(){
+        for(int j = 0; j < 30; j++){
+            for(int i = 0; i < 30; i++)
+                grid[j][i] = null;
+        }
+        xShift = 0;
+        yShift = 0;
     }
 }
