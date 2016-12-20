@@ -5,33 +5,29 @@ import java.io.*;
 import java.util.Random;
 
 public abstract class ResourceLoader {
-    protected static void writeFile(int in_rows, int in_cols, Tile in_grid[][], String level) {
+    protected static void writeFile(int in_rows, int in_cols, Tile in_grid[][], File writeLocation) {
 
         File dir = new File(System.getProperty("user.home") + File.separator + "Documents/Red-Riding-Hell-Levels");
         dir.mkdir();
 
-        String filePath = System.getProperty("user.home") + File.separator + "Documents/Red-Riding-Hell-Levels" + File.separator + level;
-
         try {
-            OutputStream file = new FileOutputStream(filePath);
+            OutputStream file = new FileOutputStream(writeLocation);
             try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(file))) {
 
-                for(int i = 0; i < in_cols; i++){
-                    for(int j = 0; j < in_rows; j++) {
+                for (int i = 0; i < in_cols; i++) {
+                    for (int j = 0; j < in_rows; j++) {
                         Tile tile = in_grid[j][i];
                         if (tile != null) {
-                            writer.write(String.valueOf(tile.getX()/48) +  ";" + String.valueOf(tile.getY()/48) +  ";" + String.valueOf(tile.getPX()) +  ";" + String.valueOf(tile.getPY()) +  ";" + String.valueOf(tile.getSpriteSheet()) +  ";");
+                            writer.write(String.valueOf(tile.getX() / 32) + ";" + String.valueOf(tile.getY() / 32) + ";" + String.valueOf(tile.getPX()) + ";" + String.valueOf(tile.getPY()) + ";" + String.valueOf(tile.getSpriteSheet()) + ";");
                             writer.newLine();
                         }
                     }
                 }
                 writer.close();
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-        catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }
@@ -39,7 +35,8 @@ public abstract class ResourceLoader {
     public static Tile[][] readFile(BufferedImage in_img, int in_blockSize, String level) {
 
         Tile[][] pass_grid = new Tile[30][30];
-        String filePath = System.getProperty("user.home") + File.separator + "Documents/Red-Riding-Hell-Levels" + File.separator + level;
+        String filePath = System.getProperty("user.home") + "\\Documents\\Red-Riding-Hell-Levels\\" + level;
+        System.out.println(filePath);
         int lineNum = 0;
         String line;
 
@@ -49,22 +46,20 @@ public abstract class ResourceLoader {
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(file))) {
 
                 while ((line = reader.readLine()) != null) {
-
                     String[] parts = line.split(";");
-                        pass_grid[Integer.parseInt(parts[1])][Integer.parseInt(parts[0])] = new Tile(in_img.getSubimage(Integer.parseInt(parts[2])*48,Integer.parseInt(parts[3])*48, 48, 48),Integer.parseInt(parts[0])*48,Integer.parseInt(parts[1])* 48, Integer.parseInt(parts[2]), Integer.parseInt(parts[3]), Integer.parseInt(parts[4]), 0, 0);
+                    pass_grid[Integer.parseInt(parts[1])][Integer.parseInt(parts[0])] = new Tile(in_img.getSubimage(Integer.parseInt(parts[2]) * 32, Integer.parseInt(parts[3]) * 32, 32, 32), Integer.parseInt(parts[0]) * 32, Integer.parseInt(parts[1]) * 32, Integer.parseInt(parts[2]), Integer.parseInt(parts[3]), Integer.parseInt(parts[4]), 0, 0);
                     lineNum++;
                 }
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-        catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
 
         return pass_grid;
     }
+
     protected static BufferedImage loadImage(String file) {
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         InputStream filePath = loader.getResourceAsStream("res/images/" + file);

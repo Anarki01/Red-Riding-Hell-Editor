@@ -11,46 +11,57 @@ public class Tile extends JPanel {
     private int tempX;  //X thats drawn in current view
     private int tempY;
     private int spriteSheet;
-    public Tile(BufferedImage img, int x, int y, int pX, int pY, int spriteSheet, int xShift, int yShift){
+
+    public Tile(BufferedImage img, int x, int y, int pX, int pY, int spriteSheet, int xShift, int yShift) {
         this.img = img;
-        this.x = x + xShift*48;
-        this.y = y + yShift*48;
+        this.x = x + xShift * 48;
+        this.y = y + yShift * 48;
         this.pX = pX;
         this.pY = pY;
         this.tempX = x;
         this.tempY = y;
         this.spriteSheet = spriteSheet;
     }
-    public void paint(Graphics g){
+
+    public void paint(Graphics g) {
         super.paint(g);
         g.drawImage(img, tempX, tempY, null);
     }
-    public int getX(){
+
+    public int getX() {
         return x;
     }
-    public int getTempX(){
-        return tempX;
-    }
-    public int getY(){
-        return y;
-    }
-    public int getTempY(){
-        return tempY;
-    }
-    public int getPX(){
-        return pX;
-    }
-    public int getPY(){
-        return pY;
-    }
-    public int getSpriteSheet(){
-        return spriteSheet;
-    }
-    public void setX(int x){
+
+    public void setX(int x) {
         this.tempX = x;
     }
-    public void setY(int y){
+
+    public int getTempX() {
+        return tempX;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
         this.tempY = y;
+    }
+
+    public int getTempY() {
+        return tempY;
+    }
+
+    public int getPX() {
+        return pX;
+    }
+
+    public int getPY() {
+        return pY;
+    }
+
+    public int getSpriteSheet() {
+        return spriteSheet;
     }
 
 }
