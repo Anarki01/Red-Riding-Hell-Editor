@@ -21,7 +21,8 @@ public class Editor extends JPanel {
     private UI btnSaveLoad;
     private UI btnZoom;
     private UI btnDeleteTile;
-    private BufferedImage img = ResourceLoader.loadImage("spriteSheets/spritesheet0.png");
+//     private BufferedImage img = ResourceLoader.loadImage("spriteSheets/spritesheet0.png");
+    private BufferedImage img = ResourceLoader.loadImage("ui.png");
     private BufferedImage imgUI = ResourceLoader.loadImage("ui.png");
     private BufferedImage cursor;
     private int sceneWidth;
